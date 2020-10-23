@@ -4,7 +4,7 @@ import { botToken } from './constants';
 const bot = new Telegraf(botToken);
 
 bot.start((ctx) => {
-    console.log(ctx.from);
+    console.log(ctx.from?.language_code);
     ctx.reply('Welcome');
 });
 bot.help((ctx) => ctx.reply('Send me a sticker'));

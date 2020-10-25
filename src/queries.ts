@@ -17,4 +17,12 @@ export class Queries {
     public static createMusic(musicModel: MusicModel, callback: any): any {
         return connection.query(`INSERT INTO music (title, duration, added_by, file_id, file_unique_id, added_at) VALUES ('${musicModel.title}', ${musicModel.duration}, ${musicModel.added_by}, '${musicModel.file_id}', '${musicModel.file_unique_id}', NOW())`, callback);
     }
+
+    public static findMusicByUserId(userId: number, callback: any): any {
+        return connection.query(`SELECT * FROM music WHERE added_by='${userId}'`, callback);
+    }
+
+    public static findMusicId(id: number, callback: any): any {
+        return connection.query(`SELECT * FROM music WHERE id='${id}'`, callback);
+    }
 }

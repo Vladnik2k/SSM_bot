@@ -3,6 +3,7 @@ import {Queries} from './queries';
 import {ErrorHandler} from './error.handler';
 import {MusicModel, UserModel} from './models';
 import {Service} from './service';
+import {Messages} from './messages';
 
 export class Commands {
     public start(telegrafContext: TelegrafContext): void {
@@ -30,6 +31,31 @@ export class Commands {
 
                 Service.createNewAudio(telegrafContext, userResults[0].id);
             });
+        });
+    }
+
+    public seeAdded(telegrafContext: TelegrafContext): void {
+        const chatId = Service.getChatId(telegrafContext);
+
+        Queries.findUser(chatId, (findUserError: any, userResults: Array<UserModel>) => {
+            if (findUserError) ErrorHandler.standard(chatId);
+
+            Queries.findMusicByUserId(userResults[0].id, (findMusicError: any, musicResults: Array<MusicModel>) => {
+                if (findMusicError) ErrorHandler.standard(chatId);
+
+                Messages.writeAdded(chatId, musicResults);
+            });
+        });
+    }
+
+    public seeSong(telegrafContext: TelegrafContext): void {
+        const musicId = +<string>telegrafContext.match?.input?.split('show-song.')[1];
+        const chatId = Service.getChatId(telegrafContext);
+
+        Queries.findMusicId(musicId, (findMusicError: any, musicResults: Array<MusicModel>) => {
+            if (findMusicError) ErrorHandler.standard(chatId);
+
+            Messages.writeAudio(chatId, musicResults[0].file_id);
         });
     }
 }

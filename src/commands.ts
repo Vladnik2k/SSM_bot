@@ -2,27 +2,29 @@ import {TelegrafContext} from 'telegraf/typings/context';
 import {Queries} from './queries';
 import {ErrorHandler} from './error.handler';
 import {UserModel} from './models';
+import {Service} from './service';
 import {Messages} from './messages';
 
 export class Commands {
     public start(telegrafContext: TelegrafContext): void {
-        const telegramId = <number>telegrafContext.from?.id;
+        const chatId = <number>telegrafContext.chat?.id;
 
-        Queries.findUser(telegramId, (error: any, results: Array<UserModel>) => {
-            if (error) ErrorHandler.standard(telegramId);
+        Queries.findUser(chatId, (error: any, results: Array<UserModel>) => {
+            if (error) ErrorHandler.standard(chatId);
 
-            results.length ? Commands.meetAgain(telegramId) : Commands.createNewUser(telegramId);
+            results.length ? Service.meetAgain(chatId) : Service.createNewUser(chatId);
         });
     }
 
-    public static meetAgain(chatId: number): void {
-        Messages.writeText(chatId, 'Hello again');
-    }
+    public uploadMusic(telegrafContent: TelegrafContext) {
+        const chatId = telegrafContent.chat?.id;
 
-    private static createNewUser(telegramId: number): void {
-        Queries.createUser(telegramId, (err: any) => {
-            if (err) ErrorHandler.standard(telegramId);
-        });
-        Messages.writeText(telegramId, 'Hello at first time');
+        const audio = telegrafContent.update?.message?.audio;
+        const duration = audio?.duration;
+        const name = audio?.title;
+        const performer = audio?.performer;
+        const fileId = audio?.file_id;
+
+        Messages.writeAudio(<number>chatId, <string>fileId);
     }
 }

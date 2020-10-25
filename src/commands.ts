@@ -1,13 +1,12 @@
 import {TelegrafContext} from 'telegraf/typings/context';
 import {Queries} from './queries';
 import {ErrorHandler} from './error.handler';
-import {UserModel} from './models';
+import {MusicModel, UserModel} from './models';
 import {Service} from './service';
-import {Messages} from './messages';
 
 export class Commands {
     public start(telegrafContext: TelegrafContext): void {
-        const chatId = <number>telegrafContext.chat?.id;
+        const chatId = Service.getChatId(telegrafContext);
 
         Queries.findUser(chatId, (error: any, results: Array<UserModel>) => {
             if (error) ErrorHandler.standard(chatId);
@@ -16,15 +15,21 @@ export class Commands {
         });
     }
 
-    public uploadMusic(telegrafContent: TelegrafContext) {
-        const chatId = telegrafContent.chat?.id;
+    public uploadMusic(telegrafContext: TelegrafContext) {
+        const chatId = Service.getChatId(telegrafContext);
+        // @ts-ignore
+        const fileUniqueId = telegrafContext.message?.audio?.file_unique_id;
 
-        const audio = telegrafContent.update?.message?.audio;
-        const duration = audio?.duration;
-        const name = audio?.title;
-        const performer = audio?.performer;
-        const fileId = audio?.file_id;
+        Queries.findMusicByFileId(fileUniqueId, (findMusicError: any, musicResults: Array<MusicModel>) => {
+            if (findMusicError) ErrorHandler.standard(chatId);
 
-        Messages.writeAudio(<number>chatId, <string>fileId);
+            if (musicResults.length) { Service.uploadMusicAgain(chatId); return; }
+
+            Queries.findUser(chatId, (findUserError: any, userResults: Array<UserModel>) => {
+                if (findUserError) ErrorHandler.standard(chatId);
+
+                Service.createNewAudio(telegrafContext, userResults[0].id);
+            });
+        });
     }
 }

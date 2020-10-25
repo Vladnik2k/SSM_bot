@@ -24,7 +24,11 @@ export class Messages {
             text += `${index + 1} - ${music.title}\n`;
             buttons.push(Markup.callbackButton(`${index + 1}`, `show-song.${music.id}`));
         });
+        const newButtons: Array<any> = [];
+        for (let i = 0; i < buttons.length; i += 5) {
+            newButtons.push(buttons.slice(i, i + 5));
+        }
 
-        bot.telegram.sendMessage(chatId, text, Extra.markup(Markup.inlineKeyboard(buttons)));
+        bot.telegram.sendMessage(chatId, text, Extra.markup(Markup.inlineKeyboard(newButtons)));
     }
 }

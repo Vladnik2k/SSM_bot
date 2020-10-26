@@ -34,6 +34,17 @@ export class Commands {
         });
     }
 
+    public searchMusic(telegrafContext: TelegrafContext) {
+        const chatId = Service.getChatId(telegrafContext);
+        const title = <string>telegrafContext.message?.text;
+
+        Queries.findMusicByTitle(title, (findMusicError: any, musicResults: Array<MusicModel>) => {
+            if (findMusicError) ErrorHandler.standard(chatId);
+
+            Messages.writeAdded(chatId, musicResults);
+        });
+    }
+
     public seeAdded(telegrafContext: TelegrafContext): void {
         const chatId = Service.getChatId(telegrafContext);
 

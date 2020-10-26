@@ -12,6 +12,7 @@ connection.connect();
 
 bot.start(commands.start);
 bot.on('audio', commands.uploadMusic);
+bot.on('text', commands.searchMusic);
 bot.command('added', commands.seeAdded);
 bot.action(/show-song.[0-9]+/, commands.seeSong);
 

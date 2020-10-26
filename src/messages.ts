@@ -12,9 +12,9 @@ export class Messages {
         bot.telegram.sendAudio(chatId, fileId);
     }
 
-    public static writeAdded(chatId: number, musicResults: Array<MusicModel>): void {
+    public static writeAdded(chatId: number, musicResults: Array<MusicModel>, textIfNothing: string): void {
         if (!musicResults.length) {
-            Messages.writeText(chatId, 'Ви ще не додали треків😢');
+            Messages.writeText(chatId, textIfNothing);
             return;
         }
 

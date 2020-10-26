@@ -41,7 +41,7 @@ export class Commands {
         Queries.findMusicByTitle(title, (findMusicError: any, musicResults: Array<MusicModel>) => {
             if (findMusicError) ErrorHandler.standard(chatId);
 
-            Messages.writeAdded(chatId, musicResults);
+            Messages.writeAdded(chatId, musicResults,  'На жаль, ми нічого не знайшли');
         });
     }
 
@@ -54,7 +54,7 @@ export class Commands {
             Queries.findMusicByUserId(userResults[0].id, (findMusicError: any, musicResults: Array<MusicModel>) => {
                 if (findMusicError) ErrorHandler.standard(chatId);
 
-                Messages.writeAdded(chatId, musicResults);
+                Messages.writeAdded(chatId, musicResults, 'Ви ще не додали треків😢');
             });
         });
     }

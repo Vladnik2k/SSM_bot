@@ -25,4 +25,8 @@ export class Queries {
     public static findMusicId(id: number, callback: any): any {
         return connection.query(`SELECT * FROM music WHERE id='${id}'`, callback);
     }
+
+    public static findMusicByTitle(title: string, callback: any): any {
+        return connection.query(`SELECT * FROM music WHERE title LIKE '%${title}%'`, callback);
+    }
 }

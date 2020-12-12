@@ -1,5 +1,4 @@
 import {bot} from './app';
-import {MusicModel} from './models';
 import {Extra, Markup} from 'telegraf';
 import {InlineKeyboardButton} from 'telegraf/typings/markup';
 
@@ -12,17 +11,12 @@ export class Messages {
         bot.telegram.sendAudio(chatId, fileId);
     }
 
-    public static writeAdded(chatId: number, musicResults: Array<MusicModel>, textIfNothing: string): void {
-        if (!musicResults.length) {
-            Messages.writeText(chatId, textIfNothing);
-            return;
-        }
-
+    public static writeAdded(chatId: number, musicResults: Array<any>): void {
         const buttons: Array<InlineKeyboardButton> = [];
         let text = '';
-        musicResults.sort(((a, b) => a.added_at < b.added_at ? 1 : -1)).forEach((music, index) => {
+        musicResults.sort(((a, b) => a.addedAt < b.addedAt ? 1 : -1)).forEach((music, index) => {
             text += `${index + 1} - ${music.title}\n`;
-            buttons.push(Markup.callbackButton(`${index + 1}`, `show-song.${music.id}`));
+            buttons.push(Markup.callbackButton(`${index + 1}`, `show-song.${music._id}`));
         });
         const newButtons: Array<any> = [];
         for (let i = 0; i < buttons.length; i += 5) {

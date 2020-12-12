@@ -1,19 +1,17 @@
-// @ts-ignore
-import mysql from 'mysql';
 import {Telegraf} from 'telegraf';
-import {botToken, mysqlConnectionData} from './constants';
-import {Commands} from './commands';
+const configs = require('./configs');
+const mongoose = require('mongoose');
+mongoose.connect(configs.mongoURI, configs.mongoData).then(() => console.log('Connected to MongoDB')).catch((err: any) => console.log(err));
 
-export const bot = new Telegraf(botToken);
-export const connection = mysql.createConnection(mysqlConnectionData);
-const commands = new Commands();
+export const bot = new Telegraf(configs.botToken);
 
-connection.connect();
+const userService = require('./services/user');
+const musicService = require('./services/music');
 
-bot.start(commands.start);
-bot.on('audio', commands.uploadMusic);
-bot.command('added', commands.seeAdded);
-bot.on('text', commands.searchMusic);
-bot.action(/show-song.[0-9]+/, commands.seeSong);
+bot.start(userService.start);
+bot.on('audio', musicService.uploadMusic);
+bot.command('added', musicService.seeAdded);
+bot.on('text', musicService.searchMusic);
+bot.action(/show-song.[0-9]+/, musicService.seeSong);
 
 bot.launch();

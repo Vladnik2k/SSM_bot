@@ -3,10 +3,11 @@ import {Messages} from '../messages';
 
 const MUSIC = require('../models/music');
 const USER = require('../models/user');
+const SQL_ERROR = require('../error');
 
 module.exports.uploadMusic = async (telegrafContext: TelegrafContext) => {
+    const chatId = <number>telegrafContext.chat?.id;
     try {
-        const chatId = <number>telegrafContext.chat?.id;
         // @ts-ignore
         const fileUniqueId = telegrafContext.message.audio.file_unique_id;
 
@@ -29,13 +30,13 @@ module.exports.uploadMusic = async (telegrafContext: TelegrafContext) => {
             await music.save();
         }
     } catch (e) {
-        console.log(e);
+        SQL_ERROR.sqlError(chatId);
     }
 };
 
 module.exports.searchMusic = async (telegrafContext: TelegrafContext) => {
+    const chatId = <number>telegrafContext.chat?.id;
     try {
-        const chatId = <number>telegrafContext.chat?.id;
         const title = <string>telegrafContext.message?.text;
         const musicFound = await MUSIC.find({ title: { $regex: title, $options : 'i' } });
 
@@ -45,25 +46,25 @@ module.exports.searchMusic = async (telegrafContext: TelegrafContext) => {
             Messages.writeAdded(chatId, musicFound);
         }
     } catch (e) {
-        console.log(e);
+        SQL_ERROR.sqlError(chatId);
     }
 };
 
 module.exports.seeSong = async (telegrafContext: TelegrafContext) => {
+    const chatId = <number>telegrafContext.chat?.id;
     try {
         const musicId = <string>telegrafContext.match?.input?.split('show-song.')[1];
-        const chatId = <number>telegrafContext.chat?.id;
 
         const music = await MUSIC.findById({ _id: musicId });
         Messages.writeAudio(chatId, music.fileId);
     } catch (e) {
-        console.log(e);
+        SQL_ERROR.sqlError(chatId);
     }
 };
 
 module.exports.seeAdded = async (telegrafContext: TelegrafContext) => {
+    const chatId = <number>telegrafContext.chat?.id;
     try {
-        const chatId = <number>telegrafContext.chat?.id;
         const user = (await USER.find({ chatId: chatId }))[0];
         const musicFound = await MUSIC.find({ addedBy: user._id });
 
@@ -73,6 +74,6 @@ module.exports.seeAdded = async (telegrafContext: TelegrafContext) => {
             Messages.writeAdded(chatId, musicFound);
         }
     } catch (e) {
-        console.log(e);
+        SQL_ERROR.sqlError(chatId);
     }
 };

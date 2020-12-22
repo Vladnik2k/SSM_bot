@@ -12,9 +12,11 @@ const categoryService = require('./services/category');
 bot.start(userService.start);
 bot.on('audio', musicService.uploadMusic);
 bot.command('added', musicService.seeAdded);
+bot.command('category', categoryService.seeCategory);
 bot.action(/show-song.[0-9]+/, musicService.seeSong);
 bot.action(/like.([a-z]|[0-9])+/, categoryService.likeMusic);
 bot.action(/dislike.([a-z]|[0-9])+/, categoryService.dislikeMusic);
+bot.action(/category.([a-z]|[0-9])+/, categoryService.getByCategory);
 bot.on('text', musicService.searchMusic);
 
 bot.launch();

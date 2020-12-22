@@ -43,7 +43,7 @@ module.exports.searchMusic = async (telegrafContext: TelegrafContext) => {
         if (!musicFound.length) {
             Messages.writeText(chatId, 'На жаль, ми нічого не знайшли');
         } else {
-            Messages.writeAdded(chatId, musicFound);
+            Messages.writeList(chatId, musicFound);
         }
     } catch (e) {
         SQL_ERROR.sqlError(chatId);
@@ -56,7 +56,7 @@ module.exports.seeSong = async (telegrafContext: TelegrafContext) => {
         const musicId = <string>telegrafContext.match?.input?.split('show-song.')[1];
 
         const music = await MUSIC.findById({ _id: musicId });
-        Messages.writeAudio(chatId, music.fileId);
+        Messages.writeAudio(chatId, music.fileId, music._id);
     } catch (e) {
         SQL_ERROR.sqlError(chatId);
     }
@@ -71,7 +71,7 @@ module.exports.seeAdded = async (telegrafContext: TelegrafContext) => {
         if (!musicFound.length) {
             Messages.writeText(chatId, 'Ви ще не додали треків😢');
         } else {
-            Messages.writeAdded(chatId, musicFound);
+            Messages.writeList(chatId, musicFound);
         }
     } catch (e) {
         SQL_ERROR.sqlError(chatId);

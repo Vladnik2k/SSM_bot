@@ -7,11 +7,13 @@ export const bot = new Telegraf(configs.botToken);
 
 const userService = require('./services/user');
 const musicService = require('./services/music');
+const categoryService = require('./services/category');
 
 bot.start(userService.start);
 bot.on('audio', musicService.uploadMusic);
 bot.command('added', musicService.seeAdded);
-bot.on('text', musicService.searchMusic);
 bot.action(/show-song.[0-9]+/, musicService.seeSong);
+bot.action(/like.([a-z]|[0-9])+/, categoryService.likeMusic);
+bot.on('text', musicService.searchMusic);
 
 bot.launch();

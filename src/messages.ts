@@ -7,11 +7,16 @@ export class Messages {
         bot.telegram.sendMessage(chatId, text);
     }
 
-    public static writeAudio(chatId: number, fileId: string): void {
+    public static writeAudio(chatId: number, fileId: string, musicId: string): void {
+        const buttons: Array<InlineKeyboardButton> = [];
+        buttons.push(Markup.callbackButton(`Подобається`, `like.${musicId}`));
+        buttons.push(Markup.callbackButton(`Неподобається`, `dislike.${musicId}`));
+
         bot.telegram.sendAudio(chatId, fileId);
+        bot.telegram.sendMessage(chatId, 'Чи подобається Вам пісня?', Extra.markup(Markup.inlineKeyboard(buttons)));
     }
 
-    public static writeAdded(chatId: number, musicResults: Array<any>): void {
+    public static writeList(chatId: number, musicResults: Array<any>): void {
         const buttons: Array<InlineKeyboardButton> = [];
         let text = '';
         musicResults.sort(((a, b) => a.addedAt < b.addedAt ? 1 : -1)).forEach((music, index) => {

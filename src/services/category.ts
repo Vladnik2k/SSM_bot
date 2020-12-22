@@ -26,3 +26,15 @@ module.exports.likeMusic = async (telegrafContext: TelegrafContext) => {
         SQL_ERROR.sqlError(chatId);
     }
 };
+
+module.exports.dislikeMusic = async (telegrafContext: TelegrafContext) => {
+    const chatId = <number>telegrafContext.chat?.id;
+    try {
+        const musicId = <string>telegrafContext.match?.input?.split('dislike.')[1];
+        const user = (await USER.find({ chatId: chatId }))[0];
+
+        await MUSIC_USER_MAPPING.findOneAndDelete({ userId: user._id, musicId: musicId });
+    } catch (e) {
+        SQL_ERROR.sqlError(chatId);
+    }
+};

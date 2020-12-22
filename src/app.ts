@@ -14,6 +14,7 @@ bot.on('audio', musicService.uploadMusic);
 bot.command('added', musicService.seeAdded);
 bot.action(/show-song.[0-9]+/, musicService.seeSong);
 bot.action(/like.([a-z]|[0-9])+/, categoryService.likeMusic);
+bot.action(/dislike.([a-z]|[0-9])+/, categoryService.dislikeMusic);
 bot.on('text', musicService.searchMusic);
 
 bot.launch();

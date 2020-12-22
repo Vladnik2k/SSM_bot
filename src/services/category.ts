@@ -52,13 +52,29 @@ module.exports.seeCategory = async (telegrafContext: TelegrafContext) => {
 };
 
 module.exports.getByCategory = async (telegrafContext: TelegrafContext) => {
-    console.log('asd');
     const chatId = <number>telegrafContext.chat?.id;
     try {
         const categoryId = <string>telegrafContext.match?.input?.split('category.')[1];
         const musicIds = (await CATEGORIES_MUSIC_MAPPING.find({ categoryId: categoryId })).map((mapping: any) => mapping.musicId);
         const musicFound = await MUSIC.find({ _id: musicIds });
         Messages.writeList(chatId, musicFound);
+    } catch (e) {
+        SQL_ERROR.sqlError(chatId);
+    }
+};
+
+module.exports.seeLiked = async (telegrafContext: TelegrafContext) => {
+    const chatId = <number>telegrafContext.chat?.id;
+    try {
+        const user = (await USER.find({ chatId: chatId }))[0];
+        const musicIds = (await MUSIC_USER_MAPPING.find({ userId: user._id })).map((mapping: any) => mapping.musicId);
+        const musicFound = await MUSIC.find({ _id: musicIds });
+
+        if (!musicFound.length) {
+            Messages.writeText(chatId, 'Ви ще не лайкнули жоден трек😢');
+        } else {
+            Messages.writeList(chatId, musicFound);
+        }
     } catch (e) {
         SQL_ERROR.sqlError(chatId);
     }

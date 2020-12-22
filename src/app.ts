@@ -13,6 +13,7 @@ bot.start(userService.start);
 bot.on('audio', musicService.uploadMusic);
 bot.command('added', musicService.seeAdded);
 bot.command('category', categoryService.seeCategory);
+bot.command('liked', categoryService.seeLiked);
 bot.action(/show-song.[0-9]+/, musicService.seeSong);
 bot.action(/like.([a-z]|[0-9])+/, categoryService.likeMusic);
 bot.action(/dislike.([a-z]|[0-9])+/, categoryService.dislikeMusic);

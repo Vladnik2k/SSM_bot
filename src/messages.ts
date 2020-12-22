@@ -13,7 +13,9 @@ export class Messages {
         buttons.push(Markup.callbackButton(`Неподобається`, `dislike.${musicId}`));
 
         bot.telegram.sendAudio(chatId, fileId);
-        bot.telegram.sendMessage(chatId, 'Чи подобається Вам пісня?', Extra.markup(Markup.inlineKeyboard(buttons)));
+        setTimeout(() => {
+            bot.telegram.sendMessage(chatId, 'Чи подобається Вам трек?', Extra.markup(Markup.inlineKeyboard(buttons)));
+        },         1000);
     }
 
     public static writeList(chatId: number, musicResults: Array<any>): void {
@@ -29,5 +31,13 @@ export class Messages {
         }
 
         bot.telegram.sendMessage(chatId, text, Extra.markup(Markup.inlineKeyboard(newButtons)));
+    }
+
+    public static writeCategories(chatId: number, categories: Array<any>): void {
+        const buttons: Array<InlineKeyboardButton> = categories.map((category: any) => {
+            return Markup.callbackButton(`${category.title}`, `category.${category._id}`);
+        });
+
+        bot.telegram.sendMessage(chatId, 'Оберіть категорію треків', Extra.markup(Markup.inlineKeyboard(buttons)));
     }
 }
